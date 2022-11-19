@@ -36,7 +36,7 @@ class Bank_Account:
                     email_checker = row[0]
                     control_when_to_Exit_the_loop += 1
 
-            if email == "" or passwords == "" or email_checker != email:
+            if email == "" or passwords == "" or email_checker != email or len(passwords) < 8:
                 qus = input("Your email or Password is Incorrect try again! To rest your password press (r) or enter to go back: ")
                 if qus == "r":
                     b.rest_Password()
@@ -84,7 +84,7 @@ class Bank_Account:
                     break
         add_account = f"{email}, {password}, {phone_number}, 0"
         with open("Account details.csv", "a") as append_file:
-            append_file.write(f"\n{add_account}")
+            append_file.write(f"{add_account}\n")
             input("\nYour account added successfully!\nPress enter to go back: ")
         b.Login_Option()
 
@@ -283,6 +283,9 @@ class Bank_Account:
     def transfer_money(self, email):
         check = False
         email_to_transfer = input("Enter the email you want to transfer to: ")
+        if email_to_transfer == "":
+            print("This email does not exist try again!"), b.transfer_money(email)
+
         with open("Account details.csv", "r") as readfile:
             reader = csv.reader(readfile)
             for row in reader:
