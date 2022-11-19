@@ -36,7 +36,7 @@ class Bank_Account:
                     email_checker = row[0]
                     control_when_to_Exit_the_loop += 1
 
-            if email == "" or passwords == "":
+            if email == "" or passwords == "" or email_checker != email:
                 qus = input("Your email or Password is Incorrect try again! To rest your password press (r) or enter to go back: ")
                 if qus == "r":
                     b.rest_Password()
@@ -44,6 +44,7 @@ class Bank_Account:
                     b.Login_Option()
             else:
                 print("You logged in successfully!")
+
             b.After_Login(email)
 
     def create_account(self):
@@ -308,10 +309,10 @@ class Bank_Account:
                         row[3] = int(row[3])
                         add_amount = int(add_amount)
                         if row[3] >= add_amount:
+                            self.amount_to_transfer = add_amount
                             row[3] = int(row[3]) - int(add_amount)
                             row[3] = f" {row[3]}"
                             row[3] = str(row[3])
-                            self.amount_to_transfer = row[3]
                         else:
                             print("You dont have enough money")
                             b.transfer_money_from_account_to_another(email_to_transfer, email)
@@ -328,20 +329,21 @@ class Bank_Account:
         with open("Account details.csv", "w") as writefile:
             writefile.write(string)
             input("Your amount has been transfer!\nPress enter to go back: ")
-        b.transfer(email_to_transfer)
+        b.transfer(email_to_transfer, email)
 
-    def transfer(self, email):
+    def transfer(self, email, email_to_move):
         lines = list()
         with open("Account details.csv", "r") as readfile:
             reader = csv.reader(readfile)
             for row in reader:
                 if email in row:
-                    row[3] = self.amount_to_transfer
+                    self.amount_to_transfer = int(row[3]) + self.amount_to_transfer
+                    row[3] = f" {str(self.amount_to_transfer)}"
                 lines += f'{",".join(row)}\n'
             string = "".join(lines)
         with open("Account details.csv", "w") as writefile:
             writefile.write(string)
-        b.After_Login(email)
+        b.After_Login(email_to_move)
 
 
 b = Bank_Account()
